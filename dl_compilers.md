@@ -13,12 +13,15 @@ license: Creative Commons Attribution 4.0 International (CC BY 4.0)
 
 So far we have covered the *classical* compiler pipeline:
 
+1. Introduction.
+1. Java overview.
 1. Lexical analysis (Lex/Flex).
 1. Syntax analysis (Yacc/Bison).
-1. Semantic analysis and type checking.
-1. Intermediate code generation (e.g., three-address code).
-1. Control-flow and data-flow analysis.
-1. Code optimization.
+1. Type checking (with type constraints).
+1. Intermediate code (e.g., three-address code).
+1. Control-flow analysis.
+1. Data-flow analysis.
+1. Compiler optimizations.
 
 Today: an *advanced* topic that puts all of this to use in a new domain---**deep learning**.
 
