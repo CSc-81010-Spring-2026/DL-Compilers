@@ -620,4 +620,9 @@ The Dragon Book does not (yet) cover this material. Use these instead.
 
 After the break: **Part 2 --- LLMs in Compiler Construction.**
 
+- LLMs *inside* the compiler --- as proposers, not as oracles.
+- Deep dive: Meta's LLM Compiler.
+- Decompilation, fuzzing, the verification gap.
+- Where each of you might contribute.
+
 > What if the *compiler itself* is partly a neural network?
