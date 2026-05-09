@@ -43,6 +43,15 @@
   }
   pre > code { background: none; padding: 0; }
 
+  /* Citeproc bibliography: hanging-indent style (first line flush,
+     wrapped lines indented) is the bibliography convention but pandoc
+     only emits the class hint; we have to supply the CSS. */
+  .csl-bib-body.hanging-indent .csl-entry {
+    padding-left: 2em;
+    text-indent: -2em;
+    margin-bottom: 0.6em;
+  }
+
   /* Mermaid: scale every diagram to a consistent fraction of the slide
      width regardless of its natural intrinsic size. max-width: 100%
      was leaving small diagrams (e.g. short pipelines) at their natural
