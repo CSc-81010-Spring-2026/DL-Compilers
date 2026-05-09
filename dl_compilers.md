@@ -15,9 +15,9 @@ So far we have covered the *classical* compiler pipeline:
 
 1. Lexical analysis (Lex/Flex).
 1. Syntax analysis (Yacc/Bison).
-1. Semantic analysis & type checking.
+1. Semantic analysis and type checking.
 1. Intermediate code generation (e.g., three-address code).
-1. Control-flow & data-flow analysis.
+1. Control-flow and data-flow analysis.
 1. Code optimization.
 
 Today: an *advanced* topic that puts all of this to use in a new domain---**deep learning**.
