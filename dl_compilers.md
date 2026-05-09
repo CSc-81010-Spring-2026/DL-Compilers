@@ -14,8 +14,8 @@ license: Creative Commons Attribution 4.0 International (CC BY 4.0)
 So far we have covered the *classical* compiler pipeline:
 
 1. Introduction.
-1. Lexical analysis (Lex/Flex).
-1. Syntax analysis (Yacc/Bison).
+1. Lexical analysis (JFlex).
+1. Syntax analysis (CUP).
 1. Type checking (with type constraints).
 1. Intermediate code (e.g., three-address code).
 1. Control-flow analysis.
