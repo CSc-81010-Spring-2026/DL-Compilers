@@ -315,7 +315,7 @@ relu(x + b)          ----fuse---->     fused_add_relu(x, b)
 - **Horizontal fusion**: combine independent ops sharing inputs.
 - **Conv + BatchNorm + ReLU**: the classic CNN fusion.
 
-This is the DL-compiler analogue of *peephole optimization* + *loop fusion*---small local rewrites in the spirit of the local optimizations you saw earlier (CSE, DCE, strength reduction), now extended across loop boundaries.
+This is the DL-compiler analogue of *peephole optimization* + *loop fusion* (which you saw in the optimizations lecture, applied to scalar loops; here it operates on tensor ops).
 
 ## Other Classical Optimizations, in DL Garb
 
