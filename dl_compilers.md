@@ -259,7 +259,7 @@ Looks like a classical *expression DAG*---but the data flowing on edges is multi
 
 ## Static Single Assignment, Tensor Edition
 
-You have already seen SSA in this course.
+**SSA (Static Single Assignment)** is a classical compiler IR property where every value has a single defining op (we didn't cover SSA explicitly this semester, but it's a small idea):
 
 - Most DL IRs are **SSA-like**: every tensor value has a single defining op.
 - Functional, side-effect-free by construction.
@@ -315,7 +315,7 @@ relu(x + b)          ----fuse---->     fused_add_relu(x, b)
 - **Horizontal fusion**: combine independent ops sharing inputs.
 - **Conv + BatchNorm + ReLU**: the classic CNN fusion.
 
-This is the DL-compiler analogue of *peephole optimization* + *loop fusion*---you have already seen the underlying ideas.
+This is the DL-compiler analogue of *peephole optimization* + *loop fusion*---small local rewrites in the spirit of the local optimizations you saw earlier (CSE, DCE, strength reduction), now extended across loop boundaries.
 
 ## Other Classical Optimizations, in DL Garb
 
@@ -454,7 +454,7 @@ graph TD
 - Optimizations happen at the *right level of abstraction*.
 - Verifier checks invariants at every step.
 
-> Compare with the *single* IR (LLVM IR) we discussed earlier: MLIR generalizes this to a *family* of IRs.
+> Compare with the *single*-IR design (e.g., LLVM IR): MLIR generalizes this to a *family* of IRs.
 
 ## MLIR's Reach Today
 
@@ -570,13 +570,14 @@ Pick a DL system you have used (PyTorch, TensorFlow, JAX, ...) and answer:
 
 ## Tying It Back to the Course
 
-Everything we covered earlier shows up here:
+Most of what we covered earlier shows up here:
 
 - **Lex/parse**: framework code $\to$ AST $\to$ graph IR.
 - **Type checking**: tensor shape/dtype/layout inference.
 - **CFG/DFG**: graph IR is *the* dataflow graph.
 - **Optimizations**: constant folding, DCE, CSE, fusion, layout, tiling.
-- **Codegen**: PTX, HIP, LLVM, Triton, MLIR.
+
+Plus one piece *we didn't cover this semester* (machine code generation), now visible everywhere: **codegen** to PTX, HIP, LLVM, Triton, MLIR.
 
 > A DL compiler is a classical compiler---with a richer high-level IR and a much more demanding cost model.
 
