@@ -3,7 +3,7 @@ title: Deep Learning Compilers
 author: Raffi Khatchadourian
 date: May 12, 2026
 semester: Spring 2026
-footer: "CSc 81010: Compiler Design & Implementation---CUNY Graduate Center"
+footer: "CSc 81010: Compiler Design & Implementation"
 license: Creative Commons Attribution 4.0 International (CC BY 4.0)
 ---
 
@@ -14,7 +14,6 @@ license: Creative Commons Attribution 4.0 International (CC BY 4.0)
 So far we have covered the *classical* compiler pipeline:
 
 1. Introduction.
-1. Java overview.
 1. Lexical analysis (Lex/Flex).
 1. Syntax analysis (Yacc/Bison).
 1. Type checking (with type constraints).
