@@ -9,16 +9,9 @@
   table th { background-color: #ececec; font-weight: bold; }
   table tr:nth-child(even) td { background-color: #fafafa; }
 
-  /* Blockquotes: italic by default (slidy's classic look) with a callout bar.
-     Inline `*emphasis*` inside reverts to upright so it visually stands out. */
-  blockquote {
-    border-left: 4px solid #4a90d9;
-    background-color: #f4f8fc;
-    padding: 0.6em 1em;
-    margin: 1em 0;
-    color: #222;
-    font-style: italic;
-  }
+  /* Blockquotes: keep slidy's default styling (italic, indented).
+     Only override: inline `*emphasis*` inside reverts to upright so it
+     visually stands out against the surrounding italic. */
   blockquote em, blockquote i { font-style: normal; }
 
   /* Figure captions */
@@ -44,10 +37,16 @@
   }
   pre > code { background: none; padding: 0; }
 
-  /* Mermaid: scale up font and node text to match slide body */
-  div.mermaid { text-align: center; margin: 1em auto; font-size: 1.15em; }
-  div.mermaid svg { max-width: 100%; height: auto; }
-  div.mermaid .nodeLabel, div.mermaid .edgeLabel { font-size: 18px !important; }
+  /* Mermaid: SVG sized via CSS so it doesn't depend on parent layout
+     at render time (slidy hides non-current slides with display:none). */
+  div.mermaid { text-align: center; margin: 1em auto; }
+  div.mermaid svg {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
 </style>
 
 <script type="module">
@@ -56,21 +55,35 @@
     startOnLoad: false,
     theme: "default",
     securityLevel: "loose",
-    fontSize: 18,
-    flowchart: { useMaxWidth: true, htmlLabels: true }
+    fontSize: 20,
+    flowchart: { useMaxWidth: false, htmlLabels: false, curve: "basis" }
   });
-  const convertAndRun = async () => {
-    document.querySelectorAll("pre.mermaid > code, pre > code.mermaid").forEach((code) => {
-      const div = document.createElement("div");
-      div.className = "mermaid";
-      div.textContent = code.textContent;
-      code.parentElement.replaceWith(div);
-    });
-    try { await mermaid.run(); } catch (e) { console.error("mermaid.run failed:", e); }
-  };
+
+  // Use mermaid.render() (returns a complete SVG string) rather than
+  // mermaid.run() against DOM nodes — render() works regardless of
+  // whether the target is currently display:none, which fixes the
+  // "empty box until you reload while on the slide" problem in slidy.
+  async function renderAll() {
+    const sources = Array.from(document.querySelectorAll('pre.mermaid > code, pre > code.mermaid'));
+    for (let i = 0; i < sources.length; i++) {
+      const code = sources[i];
+      const definition = code.textContent;
+      const id = `mermaid-${Date.now()}-${i}`;
+      try {
+        const { svg } = await mermaid.render(id, definition);
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.innerHTML = svg;
+        code.parentElement.replaceWith(div);
+      } catch (e) {
+        console.error(`mermaid.render failed for diagram ${i}:`, e);
+      }
+    }
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", convertAndRun);
+    document.addEventListener("DOMContentLoaded", renderAll);
   } else {
-    convertAndRun();
+    renderAll();
   }
 </script>
