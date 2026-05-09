@@ -88,10 +88,10 @@ A DL compiler is a *bridge* between framework-level models and hardware-specific
 
 ```mermaid
 graph TD
-  fw["Framework code\nTF / PyTorch / JAX"] --> high["High-level IR\ncomputation graph, ops, tensors, shapes"]
+  fw["Framework code\nTF/PyTorch/JAX"] --> high["High-level IR\ncomputation graph, ops, tensors, shapes"]
   high --> mid["Mid-level IR\nloops, tiles, memory layout"]
   mid --> low["Low-level IR\ntarget-specific: PTX, HIP, LLVM, Triton"]
-  low --> mc["Machine code\nGPU / TPU / NPU / CPU"]
+  low --> mc["Machine code\nGPU/TPU/NPU/CPU"]
 ```
 
 > **Same lowering principle as a classical compiler.** What's new is the *high level*.
@@ -215,7 +215,7 @@ This is a recurring theme in modern PL research: relax soundness, regain coverag
 A fair question: most of you write PyTorch. Why does this research target TensorFlow's `@tf.function`?
 
 - **Maturity**: `@tf.function` shipped with TF 2.0 (2019). `torch.compile` became the default only in PyTorch 2.0 (2022) and is still evolving rapidly.
-- **One canonical mechanism**: TF settled on `@tf.function`. PyTorch has accumulated `torch.jit.trace`, `torch.jit.script`, `torch.compile` / Dynamo, FX---each with different capture semantics.
+- **One canonical mechanism**: TF settled on `@tf.function`. PyTorch has accumulated `torch.jit.trace`, `torch.jit.script`, `torch.compile`/Dynamo, FX---each with different capture semantics.
 - **Explicit decorator boundary**: `@tf.function` requires a *deliberate* annotation. That is the kind of stable abstraction a static analysis can latch onto.
 - **Tooling lineage**: WALA Ariadne grew up around TensorFlow patterns. Re-targeting to PyTorch requires a parallel set of tensor-generator summaries---*active future work*.
 
@@ -276,7 +276,7 @@ A tensor's *type* in a DL IR is much more than `int` or `float`.
 | Dtype     | `float16`                   |
 | Layout    | `NHWC` vs. `NCHW`           |
 | Device    | `cuda:0`                    |
-| Sparsity  | dense / CSR / block-sparse  |
+| Sparsity  | dense/CSR/block-sparse  |
 
 > Q: How does this change what *type checking* and *type inference* mean?
 
@@ -370,7 +370,7 @@ We will walk through five systems:
 1. **XLA** (Google).
 1. **MLIR** (LLVM project)---*we'll spend the most time here*.
 1. **TorchInductor** (PyTorch 2).
-1. **IREE / Glow / TensorRT / ONNX Runtime** (briefly).
+1. **IREE/Glow/TensorRT/ONNX Runtime** (briefly).
 
 > Each one makes different tradeoffs in IR design, generality, and target focus.
 
@@ -443,9 +443,9 @@ The *defining workflow* of an MLIR-based compiler.
 ```mermaid
 graph TD
   tosa["tosa\n(NN ops)"] -->|legalize| linalg[linalg]
-  linalg -->|tile / fuse| scfvec["scf + vector"]
+  linalg -->|tile/fuse| scfvec["scf + vector"]
   scfvec -->|lower| llvmgpu["llvm + nvgpu"]
-  llvmgpu -->|LLVM backend| target["PTX / object code"]
+  llvmgpu -->|LLVM backend| target["PTX/object code"]
 ```
 
 - Each step is a **conversion pass** between dialects.
@@ -459,7 +459,7 @@ graph TD
 :::::::::::::: {.columns}
 ::: {.column width="55%"}
 
-- **TensorFlow**: TF graphs $\to$ MLIR $\to$ XLA HLO $\to$ TPU / GPU.
+- **TensorFlow**: TF graphs $\to$ MLIR $\to$ XLA HLO $\to$ TPU/GPU.
 - **JAX**: traces to `stablehlo` (an MLIR dialect).
 - **PyTorch**: `torch-mlir` exposes PyTorch through MLIR.
 - **IREE**: full ML inference stack built end-to-end on MLIR.
@@ -541,7 +541,7 @@ def add_kernel(x_ptr, y_ptr, out_ptr, n, BLOCK: tl.constexpr):
 | XLA              | HLO            | (was LLO; now MLIR) | TPU codegen           |
 | MLIR-based       | many dialects  | many dialects     | *Infrastructure*        |
 | TorchInductor    | FX graph       | Inductor IR + Triton | PyTorch UX           |
-| IREE             | StableHLO      | LinAlg / Vector   | On-device deployment    |
+| IREE             | StableHLO      | LinAlg/Vector   | On-device deployment    |
 | TensorRT         | Internal       | Internal          | NVIDIA peak performance |
 
 ## What Still Goes Wrong
@@ -562,7 +562,7 @@ Pick a DL system you have used (PyTorch, TensorFlow, JAX, ...) and answer:
 
 1. Which graph-capture mechanism does it use?
 1. Which compiler backend does it use by default today?
-1. Have you ever hit a graph break / `tf.function` retracing issue?
+1. Have you ever hit a graph break/`tf.function` retracing issue?
 
 > Now: which of those failures are a *programming language* problem, and which are a *compiler engineering* problem?
 
