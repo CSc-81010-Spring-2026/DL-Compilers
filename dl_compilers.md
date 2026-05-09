@@ -86,20 +86,12 @@ Modern DL workloads stress every assumption a classical compiler makes.
 
 A DL compiler is a *bridge* between framework-level models and hardware-specific kernels.
 
-```
-   Framework code      [TF / PyTorch / JAX]
-          |
-          v
-   High-level IR       (computation graph, ops, tensors, shapes)
-          |
-          v
-   Mid-level IR        (loops, tiles, memory layout)
-          |
-          v
-   Low-level IR        (target-specific: PTX, HIP, LLVM, Triton)
-          |
-          v
-   Machine code        (GPU/TPU/NPU/CPU)
+```mermaid
+graph TD
+  fw["Framework code<br/>TF / PyTorch / JAX"] --> high["High-level IR<br/>computation graph, ops, tensors, shapes"]
+  high --> mid["Mid-level IR<br/>loops, tiles, memory layout"]
+  mid --> low["Low-level IR<br/>target-specific: PTX, HIP, LLVM, Triton"]
+  low --> mc["Machine code<br/>GPU / TPU / NPU / CPU"]
 ```
 
 > **Same lowering principle as a classical compiler.** What's new is the *high level*.
@@ -235,7 +227,7 @@ A fair question: most of you write PyTorch. Why does this research target Tensor
 ## Computation Graphs as the High-Level IR
 
 :::::::::::::: {.columns}
-::: {.column width="50%"}
+::: {.column width="40%"}
 
 A DL model is naturally a directed acyclic graph (DAG) of tensor ops.
 
@@ -245,12 +237,20 @@ A DL model is naturally a directed acyclic graph (DAG) of tensor ops.
 - **Leaves**: outputs/loss.
 
 :::
-::: {.column width="50%"}
+::: {.column width="60%"}
 
-```
-   x ── matmul ── add ── relu ── matmul ── add ── y
-        │         │              │         │
-       w1        b1             w2        b2
+```mermaid
+graph LR
+  x([x]) --> mm1[matmul]
+  w1([w1]) --> mm1
+  mm1 --> add1[add]
+  b1([b1]) --> add1
+  add1 --> relu[relu]
+  relu --> mm2[matmul]
+  w2([w2]) --> mm2
+  mm2 --> add2[add]
+  b2([b2]) --> add2
+  add2 --> y([y])
 ```
 
 Looks like a classical *expression DAG* --- but the data flowing on edges is multi-dimensional.
