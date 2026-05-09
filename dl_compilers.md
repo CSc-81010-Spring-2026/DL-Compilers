@@ -88,10 +88,10 @@ A DL compiler is a *bridge* between framework-level models and hardware-specific
 
 ```mermaid
 graph TD
-  fw["Framework code<br/>TF / PyTorch / JAX"] --> high["High-level IR<br/>computation graph, ops, tensors, shapes"]
-  high --> mid["Mid-level IR<br/>loops, tiles, memory layout"]
-  mid --> low["Low-level IR<br/>target-specific: PTX, HIP, LLVM, Triton"]
-  low --> mc["Machine code<br/>GPU / TPU / NPU / CPU"]
+  fw["Framework code\nTF / PyTorch / JAX"] --> high["High-level IR\ncomputation graph, ops, tensors, shapes"]
+  high --> mid["Mid-level IR\nloops, tiles, memory layout"]
+  mid --> low["Low-level IR\ntarget-specific: PTX, HIP, LLVM, Triton"]
+  low --> mc["Machine code\nGPU / TPU / NPU / CPU"]
 ```
 
 > **Same lowering principle as a classical compiler.** What's new is the *high level*.
@@ -154,14 +154,11 @@ But it is not *free* to use:
 
 The *DL compiler* sits on the **graph** side of the bridge. Our research sits on the **imperative-to-graph** side.
 
-```
-Python (eager)  --refactoring/static analysis-->  Graph
-                                                   |
-                                                   v
-                                          DL compiler (today)
-                                                   |
-                                                   v
-                                          Optimized kernels
+```mermaid
+graph TD
+  py["Python (eager)"] -->|"refactoring +\nstatic analysis"| g[Graph]
+  g --> c["DL compiler (today)"]
+  c --> k[Optimized kernels]
 ```
 
 - Static tensor analysis decides *which* eager functions can become graphs.
@@ -447,7 +444,7 @@ The *defining workflow* of an MLIR-based compiler.
 
 ```mermaid
 graph TD
-  tosa["tosa<br/>(NN ops)"] -->|legalize| linalg[linalg]
+  tosa["tosa\n(NN ops)"] -->|legalize| linalg[linalg]
   linalg -->|tile / fuse| scfvec["scf + vector"]
   scfvec -->|lower| llvmgpu["llvm + nvgpu"]
   llvmgpu -->|LLVM backend| target["PTX / object code"]
