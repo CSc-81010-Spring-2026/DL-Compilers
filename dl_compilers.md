@@ -623,6 +623,6 @@ After the break: **Part 2 --- LLMs in Compiler Construction.**
 - LLMs *inside* the compiler --- as proposers, not as oracles.
 - Deep dive: Meta's LLM Compiler.
 - Decompilation, fuzzing, the verification gap.
-- Where each of you might contribute.
+- Where compilers people fit in.
 
 > What if the *compiler itself* is partly a neural network?
