@@ -3,7 +3,7 @@ title: Deep Learning Compilers
 author: Raffi Khatchadourian
 date: May 12, 2026
 semester: Spring 2026
-footer: CSc 81010 --- Compiler Construction --- CUNY Graduate Center
+footer: CSc 81010---Compiler Construction---CUNY Graduate Center
 license: Creative Commons Attribution 4.0 International (CC BY 4.0)
 ---
 
@@ -20,7 +20,7 @@ So far we have covered the *classical* compiler pipeline:
 1. Control-flow & data-flow analysis.
 1. Code optimization.
 
-Today: an *advanced* topic that puts all of this to use in a new domain --- **deep learning**.
+Today: an *advanced* topic that puts all of this to use in a new domain---**deep learning**.
 
 > Q: What does a "compiler" mean when the program is a *neural network*?
 
@@ -28,7 +28,7 @@ Today: an *advanced* topic that puts all of this to use in a new domain --- **de
 
 This is a two-hour session, covering two related advanced topics.
 
-### Part 1 (This Deck) --- Deep Learning Compilers
+### Part 1 (This Deck)---Deep Learning Compilers
 
 - Why DL needs its own compilers.
 - Imperative vs. graph execution.
@@ -36,7 +36,7 @@ This is a two-hour session, covering two related advanced topics.
 - Operator fusion, layout transforms, autotuning.
 - A tour of TVM, XLA, **MLIR**, TorchInductor, IREE.
 
-### Part 2 (Next Deck) --- LLMs in Compiler Construction
+### Part 2 (Next Deck)---LLMs in Compiler Construction
 
 - LLMs *as* compiler components.
 - Meta's LLM Compiler, neural decompilation, fuzzing.
@@ -138,7 +138,7 @@ def f(x):
 :::
 ::::::::::::::
 
-## Why This Matters --- and a Research Connection
+## Why This Matters---and a Research Connection
 
 Hybrid frameworks (TF, PyTorch 2.x) let developers *opt in* to graph execution per function: `@tf.function`, `@torch.jit.script`, `@torch.compile`.
 
@@ -148,7 +148,7 @@ But it is not *free* to use:
 - Python control flow may need rewrites.
 - Errors are reported at compile time, often far from the cause.
 
-> This is exactly the boundary our research investigates --- *when is it safe and beneficial to refactor an imperative DL program to graph execution?* [@kh23; @kh25]
+> This is exactly the boundary our research investigates---*when is it safe and beneficial to refactor an imperative DL program to graph execution?* [@kh23; @kh25]
 
 ## Two Worlds, One Bridge
 
@@ -183,7 +183,7 @@ What does "decide if a function can become a graph" actually involve?
 
 - **Tensor analysis**: track which Python values flow as tensors (vs. lists, dicts, scalars).
 - **Side-effect analysis**: identify operations that would not survive graph capture (mutating Python state, I/O, non-deterministic ops).
-- **Preconditions**: a *safety contract* per function --- if all checks pass, refactoring is sound.
+- **Preconditions**: a *safety contract* per function---if all checks pass, refactoring is sound.
 
 :::
 ::::::::::::::
@@ -215,11 +215,11 @@ This is a recurring theme in modern PL research: relax soundness, regain coverag
 A fair question: most of you write PyTorch. Why does this research target TensorFlow's `@tf.function`?
 
 - **Maturity**: `@tf.function` shipped with TF 2.0 (2019). `torch.compile` became the default only in PyTorch 2.0 (2022) and is still evolving rapidly.
-- **One canonical mechanism**: TF settled on `@tf.function`. PyTorch has accumulated `torch.jit.trace`, `torch.jit.script`, `torch.compile` / Dynamo, FX --- each with different capture semantics.
+- **One canonical mechanism**: TF settled on `@tf.function`. PyTorch has accumulated `torch.jit.trace`, `torch.jit.script`, `torch.compile` / Dynamo, FX---each with different capture semantics.
 - **Explicit decorator boundary**: `@tf.function` requires a *deliberate* annotation. That is the kind of stable abstraction a static analysis can latch onto.
-- **Tooling lineage**: WALA Ariadne grew up around TensorFlow patterns. Re-targeting to PyTorch requires a parallel set of tensor-generator summaries --- *active future work*.
+- **Tooling lineage**: WALA Ariadne grew up around TensorFlow patterns. Re-targeting to PyTorch requires a parallel set of tensor-generator summaries---*active future work*.
 
-> The approach generalizes. PyTorch and JAX are next --- and the retracing, graph-break, and side-effect patterns we study in TensorFlow *recur* in both. They are general DL-compiler problems, not TF-specific quirks.
+> The approach generalizes. PyTorch and JAX are next---and the retracing, graph-break, and side-effect patterns we study in TensorFlow *recur* in both. They are general DL-compiler problems, not TF-specific quirks.
 
 ## Computation Graphs as the High-Level IR
 
@@ -250,7 +250,7 @@ graph LR
   add2 --> y([y])
 ```
 
-Looks like a classical *expression DAG* --- but the data flowing on edges is multi-dimensional.
+Looks like a classical *expression DAG*---but the data flowing on edges is multi-dimensional.
 
 :::
 ::::::::::::::
@@ -263,7 +263,7 @@ You have already seen SSA in this course.
 - Functional, side-effect-free by construction.
 - This is what makes graph-level optimization tractable.
 
-> Tensors get rich type information: shape, rank, dtype, layout, device --- much richer than scalar SSA.
+> Tensors get rich type information: shape, rank, dtype, layout, device---much richer than scalar SSA.
 
 ## Shape and Type Information
 
@@ -307,13 +307,13 @@ relu(x + b)          ----fuse---->     fused_add_relu(x, b)
 
 ## A Family of Fusion Patterns
 
-- **Element-wise fusion**: `add`, `mul`, `relu`, `sigmoid`, ... --- chain freely.
+- **Element-wise fusion**: `add`, `mul`, `relu`, `sigmoid`, ...---chain freely.
 - **Reduction fusion**: fold reductions (`sum`, `mean`) into a producing kernel.
 - **Vertical fusion**: stack producers and consumers.
 - **Horizontal fusion**: combine independent ops sharing inputs.
 - **Conv + BatchNorm + ReLU**: the classic CNN fusion.
 
-This is the DL-compiler analogue of *peephole optimization* + *loop fusion* --- you have already seen the underlying ideas.
+This is the DL-compiler analogue of *peephole optimization* + *loop fusion*---you have already seen the underlying ideas.
 
 ## Other Classical Optimizations, in DL Garb
 
@@ -368,7 +368,7 @@ We will walk through five systems:
 
 1. **TVM** (Apache).
 1. **XLA** (Google).
-1. **MLIR** (LLVM project) --- *we'll spend the most time here*.
+1. **MLIR** (LLVM project)---*we'll spend the most time here*.
 1. **TorchInductor** (PyTorch 2).
 1. **IREE / Glow / TensorRT / ONNX Runtime** (briefly).
 
@@ -412,9 +412,9 @@ We will walk through five systems:
 MLIR is arguably the most influential compiler infrastructure project of the past decade.
 
 - Originally developed at Google by Chris Lattner et al., 2018--2019 [@mlir].
-- **Born from DL-compiler needs**: the TF/XLA team built it to escape the limits of HLO. MLIR was *not* a general compiler project later applied to ML --- it grew out of the ML-compiler problem and then generalized to other domains (hardware design, new languages).
+- **Born from DL-compiler needs**: the TF/XLA team built it to escape the limits of HLO. MLIR was *not* a general compiler project later applied to ML---it grew out of the ML-compiler problem and then generalized to other domains (hardware design, new languages).
 - Before MLIR, every DL compiler reinvented its own IR, pass manager, verifier, and lowering: TVM (Relay + TIR), XLA (HLO), TensorFlow (GraphDef), PyTorch (TorchScript), ONNX.
-- Now part of LLVM. The substrate beneath XLA, IREE, TensorFlow, JAX, the TPU compiler --- and increasingly hardware design (CIRCT) and new languages (Mojo).
+- Now part of LLVM. The substrate beneath XLA, IREE, TensorFlow, JAX, the TPU compiler---and increasingly hardware design (CIRCT) and new languages (Mojo).
 
 > Q: What pattern from this course (and from LLVM) does this remind you of?
 
@@ -487,7 +487,7 @@ PyTorch's default backend behind `torch.compile` [@pt2]. The system splits into 
 
 - Hooks CPython's frame-evaluation API (PEP 523).
 - Symbolically interprets bytecode.
-- Captures an **FX graph** --- a Python-level graph IR.
+- Captures an **FX graph**---a Python-level graph IR.
 - Falls back to eager on "graph breaks" (e.g., unsupported Python).
 
 :::
@@ -496,14 +496,14 @@ PyTorch's default backend behind `torch.compile` [@pt2]. The system splits into 
 ### Backend: TorchInductor
 
 - A **PyTorch-native compiler**: takes TorchDynamo's FX graph and emits low-level kernels.
-- IR is *pythonic* and *define-by-run* --- built incrementally as code is traced.
+- IR is *pythonic* and *define-by-run*---built incrementally as code is traced.
 - Lowers to **Triton** (GPU) or **C++/OpenMP** (CPU).
 - Aggressive op fusion. Real-world reports: 30--80% inference speedups on common models.
 
 :::
 ::::::::::::::
 
-> Notice the *graph-break* mechanism --- it concedes that not all imperative code can be compiled. (Recall the connection to safe refactoring.)
+> Notice the *graph-break* mechanism---it concedes that not all imperative code can be compiled. (Recall the connection to safe refactoring.)
 
 ## The PT2 Compilation Pipeline
 
@@ -551,7 +551,7 @@ Even with great compilers, real DL programs fight the toolchain. **Each bullet b
 - **Graph breaks**: Python features the tracer can't follow. *(Open: how to safely cross or eliminate them without sacrificing eager fall-back.)*
 - **Shape specialization explosion**: too many recompiles. *(Open: better symbolic-shape reasoning; bounding the specialization space.)*
 - **Numerical drift**: fused kernels reorder floating-point math. *(Open: verifying numerical equivalence under aggressive fusion.)*
-- **Side effects**: `print`, mutable state, file I/O behave subtly differently in graph mode. *(Open: precise effect tracking in dynamic languages --- what our research addresses.)*
+- **Side effects**: `print`, mutable state, file I/O behave subtly differently in graph mode. *(Open: precise effect tracking in dynamic languages---what our research addresses.)*
 - **Debuggability**: the kernel that ran is not the code you wrote. *(Open: source-level mapping from compiler output back to user code.)*
 
 > These are *exactly* the obstacles our refactoring research targets [@kh23; @kh25].
@@ -576,7 +576,7 @@ Everything we covered earlier shows up here:
 - **Optimizations**: constant folding, DCE, CSE, fusion, layout, tiling.
 - **Codegen**: PTX, HIP, LLVM, Triton, MLIR.
 
-> A DL compiler is a classical compiler --- with a richer high-level IR and a much more demanding cost model.
+> A DL compiler is a classical compiler---with a richer high-level IR and a much more demanding cost model.
 
 ## Take-Home Points
 
@@ -584,7 +584,7 @@ Everything we covered earlier shows up here:
 1. The high-level IR is a **typed computation graph**.
 1. **Operator fusion** is *the* defining optimization, motivated by memory-bound GPUs.
 1. **MLIR** is the dominant infrastructure, built around **dialects** and **progressive lowering**.
-1. The hardest open problem isn't "make it fast" --- it's "make it safe to compile in the first place".
+1. The hardest open problem isn't "make it fast"---it's "make it safe to compile in the first place".
 1. That last point connects this entire course to active research.
 
 ## Suggested Reading
@@ -593,8 +593,8 @@ The Dragon Book does not (yet) cover this material. Use these instead.
 
 ### Required (Pick One)
 
-- Li et al. *The Deep Learning Compiler: A Comprehensive Survey.* IEEE TPDS 2020. [arxiv.org/abs/2002.03794](https://arxiv.org/abs/2002.03794) --- the standard entry point.
-- Chip Huyen. *A Friendly Introduction to ML Compilers and Optimizers.* 2021. [huyenchip.com/2021/09/07/...](https://huyenchip.com/2021/09/07/a-friendly-introduction-to-machine-learning-compilers-and-optimizers.html) --- shorter and more accessible.
+- Li et al. *The Deep Learning Compiler: A Comprehensive Survey.* IEEE TPDS 2020. [arxiv.org/abs/2002.03794](https://arxiv.org/abs/2002.03794)---the standard entry point.
+- Chip Huyen. *A Friendly Introduction to ML Compilers and Optimizers.* 2021. [huyenchip.com/2021/09/07/...](https://huyenchip.com/2021/09/07/a-friendly-introduction-to-machine-learning-compilers-and-optimizers.html)---shorter and more accessible.
 
 ### Strongly Recommended
 
@@ -614,9 +614,9 @@ The Dragon Book does not (yet) cover this material. Use these instead.
 
 ## Up Next
 
-After the break: **Part 2 --- LLMs in Compiler Construction.**
+After the break: **Part 2---LLMs in Compiler Construction.**
 
-- LLMs *inside* the compiler --- as proposers, not as oracles.
+- LLMs *inside* the compiler---as proposers, not as oracles.
 - Deep dive: Meta's LLM Compiler.
 - Decompilation, fuzzing, the verification gap.
 - Where compilers people fit in.
