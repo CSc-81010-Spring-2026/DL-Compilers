@@ -407,8 +407,6 @@ We will walk through five systems:
 
 > Q: How is HLO similar to and different from a traditional three-address-code IR?
 
-# MLIR --- Multi-Level Intermediate Representation
-
 ## Why MLIR Exists
 
 MLIR is arguably the most influential compiler infrastructure project of the past decade.
@@ -477,8 +475,6 @@ graph TD
 
 :::
 ::::::::::::::
-
-# Back to the Tour
 
 ## TorchInductor (PyTorch 2.x)
 
