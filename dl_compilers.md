@@ -294,9 +294,9 @@ PyTorch 2.x uses *symbolic shape* tracking in its compiler so it can specialize 
 
 DL training is *forward and backward*. A DL compiler has to deal with both.
 
-- **Forward pass**: input → output (the model's prediction).
-- **Backward pass**: output → gradients of the loss with respect to each parameter.
-- **Automatic differentiation** mechanically derives the backward graph from the forward graph.
+- **Forward pass**: input → output (running the model).
+- **Backward pass**: output → **gradients** --- partial derivatives of the loss (a scalar error measure) with respect to each model parameter (a learnable weight). Used by gradient descent to nudge parameters and reduce loss. Mechanized chain rule from calculus.
+- **Automatic differentiation** is the technique that derives the backward graph from the forward graph mechanically.
 - A DL compiler must capture, optimize, and lower **both graphs together**: fusing across the forward/backward boundary, sharing intermediate buffers, recomputing for memory.
 
 In PyTorch 2 this is what **AOTAutograd** does (the second box in the pipeline diagram coming up): it captures the backward pass ahead-of-time so the compiler sees the whole training step.
