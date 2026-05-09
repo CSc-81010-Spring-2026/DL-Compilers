@@ -69,6 +69,18 @@
   }
 </style>
 
+<script>
+  // Disable slidy's mouse-click-to-advance by default. Students may
+  // click slides to copy code, follow citation links, or interact with
+  // diagrams; we don't want any of those clicks to advance the deck.
+  // Press K during the presentation to toggle back on.
+  window.addEventListener("load", () => {
+    if (typeof w3c_slidy !== "undefined") {
+      w3c_slidy.mouse_click_enabled = false;
+    }
+  });
+</script>
+
 <script type="module">
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
   mermaid.initialize({
