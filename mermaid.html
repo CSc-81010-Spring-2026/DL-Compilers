@@ -9,14 +9,20 @@
   table th { background-color: #ececec; font-weight: bold; }
   table tr:nth-child(even) td { background-color: #fafafa; }
 
-  /* Blockquotes: keep slidy's default styling (italic, indented).
-     Only override: inline `*emphasis*` inside reverts to upright so it
-     visually stands out against the surrounding italic. */
+  /* Blockquotes: pronounced left-bar callout (no background fill, so
+     it doesn't clash with the code-block tint). Italic by slidy default;
+     inline `*emphasis*` reverts to upright for contrast. */
+  blockquote {
+    border-left: 4px solid #4a90d9;
+    padding: 0.4em 0.9em;
+    margin: 1em 0;
+  }
   blockquote em, blockquote i { font-style: normal; }
 
-  /* Figure captions */
-  figure { text-align: center; }
-  figcaption {
+  /* Figures and pandoc's .float container (used when an image has a
+     caption) — center both the image and its caption. */
+  figure, .float { text-align: center; }
+  figcaption, .figcaption {
     font-size: 0.85em;
     color: #555;
     font-style: italic;
@@ -41,8 +47,8 @@
      at render time (slidy hides non-current slides with display:none). */
   div.mermaid { text-align: center; margin: 1em auto; }
   div.mermaid svg {
-    width: 100%;
-    max-width: 900px;
+    max-width: 100%;
+    max-height: 60vh;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -55,7 +61,7 @@
     startOnLoad: false,
     theme: "default",
     securityLevel: "loose",
-    fontSize: 20,
+    fontSize: 14,
     flowchart: { useMaxWidth: false, htmlLabels: false, curve: "basis" }
   });
 
