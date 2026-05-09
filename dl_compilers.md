@@ -3,7 +3,7 @@ title: Deep Learning Compilers
 author: Raffi Khatchadourian
 date: May 12, 2026
 semester: Spring 2026
-footer: CSc 81010: Compiler Design & Implementation---CUNY Graduate Center
+footer: "CSc 81010: Compiler Design & Implementation---CUNY Graduate Center"
 license: Creative Commons Attribution 4.0 International (CC BY 4.0)
 ---
 
