@@ -16,8 +16,8 @@ So far we have covered the *classical* compiler pipeline:
 1. Introduction.
 1. Lexical analysis (JFlex).
 1. Syntax analysis (CUP).
-1. Type checking (with type constraints).
-1. Intermediate code (e.g., three-address code).
+1. Type checking (attribute grammars, type constraints).
+1. Intermediate code (ASTs, DAGs, three-address code).
 1. Control-flow analysis.
 1. Data-flow analysis.
 1. Compiler optimizations.
