@@ -1,5 +1,5 @@
 FILE=dl_compilers
-PANDOC_CMD=pandoc --shift-heading-level-by=-1 -t slidy -s -H mermaid.html --citeproc --bibliography=refs.bib $(FILE).md -o $(FILE).html
+PANDOC_CMD=pandoc --shift-heading-level-by=-1 -t slidy -s -H header.html --citeproc --bibliography=refs.bib $(FILE).md -o $(FILE).html
 
 all:
 	$(PANDOC_CMD)
