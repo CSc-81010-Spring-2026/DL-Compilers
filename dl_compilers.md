@@ -156,15 +156,11 @@ But it is not *free* to use:
 - Python control flow may need rewrites.
 - Errors are reported at compile time, often far from the cause.
 
-> This is exactly the boundary my own research investigates --- *when is it safe and beneficial to refactor an imperative DL program to graph execution?* [^kh23] [^kh25]
-
-[^kh23]: Khatchadourian et al. *Towards Safe Automated Refactoring of Imperative Deep Learning Programs to Graph Execution.* ASE 2023. [arxiv.org/abs/2308.11785](https://arxiv.org/abs/2308.11785)
-
-[^kh25]: Khatchadourian et al. *Speculative Automated Refactoring of Imperative Deep Learning Programs to Graph Execution.* 2025. [arxiv.org/abs/2504.05424](https://arxiv.org/abs/2504.05424)
+> This is exactly the boundary our research investigates --- *when is it safe and beneficial to refactor an imperative DL program to graph execution?* [@kh23; @kh25]
 
 ## Two Worlds, One Bridge
 
-The *DL compiler* sits on the **graph** side of the bridge. My research sits on the **imperative-to-graph** side.
+The *DL compiler* sits on the **graph** side of the bridge. Our research sits on the **imperative-to-graph** side.
 
 ```
 Python (eager)  --refactoring/static analysis-->  Graph
@@ -178,7 +174,7 @@ Python (eager)  --refactoring/static analysis-->  Graph
 
 - Static tensor analysis decides *which* eager functions can become graphs.
 - A DL compiler then takes that graph and makes it fast.
-- A 2.16x average speedup on real DL projects when refactoring is done correctly. [^kh25]
+- A 2.16x average speedup on real DL projects when refactoring is done correctly [@kh25].
 
 > Q: Why can't we just compile *all* Python automatically?
 
@@ -189,7 +185,7 @@ What does "decide if a function can become a graph" actually involve?
 :::::::::::::: {.columns}
 ::: {.column width="55%"}
 
-![System architecture: PyDev (refactoring UI) and Ariadne (tensor + type analysis) sit on Eclipse, Jython 3, and WALA.](graphics/architecture.drawio.png){width=100% title="From Khatchadourian et al. 2025."}
+![System architecture: PyDev (refactoring UI) and Ariadne (tensor + type analysis) sit on Eclipse, Jython 3, and WALA. (Khatchadourian et al. 2025.)](graphics/architecture.drawio.png){width=100%}
 
 :::
 ::: {.column width="45%"}
@@ -209,7 +205,7 @@ What does "decide if a function can become a graph" actually involve?
 
 Python is dynamically typed and reflective. Pure static analysis hits walls.
 
-### The Speculative-Analysis Trick [^kh25]
+### The Speculative-Analysis Trick
 
 - When the analysis cannot decide a question, ask *"is there reasonable evidence?"*
 - E.g., function name, decorator, type hint, library import suggesting a tensor.
@@ -217,13 +213,24 @@ Python is dynamically typed and reflective. Pure static analysis hits walls.
 
 > An *unsound* analysis with explicit assumptions can be more useful than a sound analysis that refuses to say anything.
 
-This is a recurring theme in modern PL research: relax soundness, regain coverage, make the assumptions visible. [^kh25]
+This is a recurring theme in modern PL research: relax soundness, regain coverage, make the assumptions visible.
 
 ## The Tool in Action
 
-![The Hybridize Functions refactoring previewing the diff: `@tf.function` injected before `def call`, side-by-side, ready to apply.](graphics/screenshot.png){width=70% title="From Khatchadourian et al. 2025."}
+![The Hybridize Functions refactoring previewing the diff: `@tf.function` injected before `def call`, side-by-side, ready to apply. (Khatchadourian et al. 2025.)](graphics/screenshot.png){width=70%}
 
 > Real Eclipse plug-in. Real refactoring preview. Real `@tf.function` decorator inserted automatically once the analysis confirms preconditions hold.
+
+## Why TensorFlow and Not PyTorch?
+
+A fair question: most of you write PyTorch. Why does this research target TensorFlow's `@tf.function`?
+
+- **Maturity**: `@tf.function` shipped with TF 2.0 (2019). `torch.compile` became the default only in PyTorch 2.0 (2022) and is still evolving rapidly.
+- **One canonical mechanism**: TF settled on `@tf.function`. PyTorch has accumulated `torch.jit.trace`, `torch.jit.script`, `torch.compile` / Dynamo, FX --- each with different capture semantics.
+- **Explicit decorator boundary**: `@tf.function` requires a *deliberate* annotation. That is the kind of stable abstraction a static analysis can latch onto.
+- **Tooling lineage**: WALA Ariadne grew up around TensorFlow patterns. Re-targeting to PyTorch requires a parallel set of tensor-generator summaries --- *active future work*.
+
+> The approach generalizes. PyTorch and JAX are next --- and the retracing, graph-break, and side-effect patterns we study in TensorFlow *recur* in both. They are general DL-compiler problems, not TF-specific quirks.
 
 ## Computation Graphs as the High-Level IR
 
@@ -282,9 +289,7 @@ A tensor's *type* in a DL IR is much more than `int` or `float`.
 - **Dynamic shapes**: batch size, sequence length, etc., vary at runtime. Common in NLP.
 - **Symbolic shapes**: dimensions represented as variables (`s0`, `s1`); constraints tracked.
 
-PyTorch 2.x uses *symbolic shape* tracking in its compiler so it can specialize without re-tracing every input. [^pt2]
-
-[^pt2]: PyTorch 2.x: torch.compile uses symbolic shapes via `torch._dynamo` + `torch._inductor`. [pytorch.org/get-started/pytorch-2-x](https://pytorch.org/get-started/pytorch-2-x/)
+PyTorch 2.x uses *symbolic shape* tracking in its compiler so it can specialize without re-tracing every input [@pt2].
 
 ## The Big Idea: Operator Fusion
 
@@ -348,21 +353,17 @@ For a single op (say, matmul of two `[1024, 1024]` matrices) on a single GPU, th
 
 > $\to$ 10s of thousands of valid implementations.
 
-**Autotuning** searches this space with cost models, evolutionary search, or learned heuristics (e.g., TVM Ansor [^ansor]).
-
-[^ansor]: Zheng et al. *Ansor: Generating High-Performance Tensor Programs for Deep Learning.* OSDI 2020.
+**Autotuning** searches this space with cost models, evolutionary search, or learned heuristics (e.g., TVM Ansor [@ansor]).
 
 ## Halide and the Algorithm/Schedule Split
 
-A foundational idea (Ragan-Kelley et al., MIT/Adobe) [^halide]:
+A foundational idea (Ragan-Kelley et al., MIT/Adobe) [@halide]:
 
 - Write the **algorithm**: *what* to compute.
 - Write the **schedule** separately: *how* to tile, vectorize, parallelize.
 - Same algorithm $\to$ many schedules $\to$ same answer, very different speeds.
 
 This decoupling is the conceptual root of TVM and many modern DL compilers.
-
-[^halide]: Ragan-Kelley et al. *Halide: A Language and Compiler for Optimizing Parallelism, Locality, and Recomputation in Image Processing Pipelines.* PLDI 2013.
 
 ## A Tour: Major DL Compilers
 
@@ -381,7 +382,7 @@ We will walk through five systems:
 :::::::::::::: {.columns}
 ::: {.column width="55%"}
 
-- Open-source, originally from the University of Washington (Tianqi Chen et al.). [^tvm]
+- Open-source, originally from the University of Washington (Tianqi Chen et al.) [@tvm].
 - Multi-stage IR: Relay (graph) $\to$ TIR (loop-level) $\to$ target code.
 - Strong on **autotuning** (AutoTVM, Ansor, MetaSchedule).
 - Targets CPUs, GPUs, mobile, FPGAs.
@@ -394,8 +395,6 @@ We will walk through five systems:
 
 - Showed that *autotuning* could match or beat hand-tuned vendor libraries.
 - Big influence on every later DL compiler.
-
-[^tvm]: Chen et al. *TVM: An Automated End-to-End Optimizing Compiler for Deep Learning.* OSDI 2018.
 
 :::
 ::::::::::::::
@@ -417,14 +416,12 @@ We will walk through five systems:
 
 MLIR is arguably the most influential compiler infrastructure project of the past decade.
 
-- Originally developed at Google by Chris Lattner et al., 2018--2019. [^mlir]
+- Originally developed at Google by Chris Lattner et al., 2018--2019 [@mlir].
 - **Born from DL-compiler needs**: the TF/XLA team built it to escape the limits of HLO. MLIR was *not* a general compiler project later applied to ML --- it grew out of the ML-compiler problem and then generalized to other domains (hardware design, new languages).
 - Before MLIR, every DL compiler reinvented its own IR, pass manager, verifier, and lowering: TVM (Relay + TIR), XLA (HLO), TensorFlow (GraphDef), PyTorch (TorchScript), ONNX.
 - Now part of LLVM. The substrate beneath XLA, IREE, TensorFlow, JAX, the TPU compiler --- and increasingly hardware design (CIRCT) and new languages (Mojo).
 
 > Q: What pattern from this course (and from LLVM) does this remind you of?
-
-[^mlir]: Lattner et al. *MLIR: A Compiler Infrastructure for the End of Moore's Law.* 2020. [arxiv.org/abs/2002.11054](https://arxiv.org/abs/2002.11054)
 
 ## Dialects: The Unit of Extensibility
 
@@ -448,11 +445,12 @@ Three dialects on one slide: `func`, `arith`, plus the `tensor` type system.
 
 The *defining workflow* of an MLIR-based compiler.
 
-```
-tosa  --(legalize)-->  linalg
-linalg  --(tile/fuse)-->  scf + vector
-scf + vector  --(lower)-->  llvm + nvgpu
-llvm  --(LLVM)-->  PTX / object code
+```mermaid
+graph TD
+  tosa["tosa<br/>(NN ops)"] -->|legalize| linalg[linalg]
+  linalg -->|tile / fuse| scfvec["scf + vector"]
+  scfvec -->|lower| llvmgpu["llvm + nvgpu"]
+  llvmgpu -->|LLVM backend| target["PTX / object code"]
 ```
 
 - Each step is a **conversion pass** between dialects.
@@ -478,7 +476,7 @@ llvm  --(LLVM)-->  PTX / object code
 :::
 ::: {.column width="45%"}
 
-![IREE: an MLIR-based end-to-end ML compiler.](graphics/iree_architecture.svg){width=100% title="Courtesy iree.dev."}
+![IREE: an MLIR-based end-to-end ML compiler. (Courtesy iree.dev.)](graphics/iree_architecture.svg){width=100%}
 
 :::
 ::::::::::::::
@@ -487,7 +485,7 @@ llvm  --(LLVM)-->  PTX / object code
 
 ## TorchInductor (PyTorch 2.x)
 
-PyTorch's default backend behind `torch.compile`. [^pt2]
+PyTorch's default backend behind `torch.compile` [@pt2]. The system splits into two pieces: a *frontend* that captures a graph from running Python, and a *backend* that lowers the graph to fast kernels.
 
 :::::::::::::: {.columns}
 ::: {.column width="50%"}
@@ -504,10 +502,10 @@ PyTorch's default backend behind `torch.compile`. [^pt2]
 
 ### Backend: TorchInductor
 
-- Define-by-run pythonic IR with symbolic shapes.
-- Generates **Triton** kernels for GPUs, **C++/OpenMP** for CPUs.
-- Aggressive op fusion.
-- Real-world reports: 30--80% inference speedups on common models.
+- A **PyTorch-native compiler**: takes TorchDynamo's FX graph and emits low-level kernels.
+- IR is *pythonic* and *define-by-run* --- built incrementally as code is traced.
+- Lowers to **Triton** (GPU) or **C++/OpenMP** (CPU).
+- Aggressive op fusion. Real-world reports: 30--80% inference speedups on common models.
 
 :::
 ::::::::::::::
@@ -516,7 +514,7 @@ PyTorch's default backend behind `torch.compile`. [^pt2]
 
 ## The PT2 Compilation Pipeline
 
-![The PyTorch 2.x stack: TorchDynamo captures an FX graph, AOTAutograd adds the backward pass, PrimTorch decomposes ops, and TorchInductor lowers to Triton (GPU) or C++/OpenMP (CPU).](graphics/pytorch2_pipeline.png){width=70% title="Courtesy pytorch.org."}
+![The PyTorch 2.x stack: TorchDynamo captures an FX graph, AOTAutograd adds the backward pass, PrimTorch decomposes ops, and TorchInductor lowers to Triton (GPU) or C++/OpenMP (CPU). (Courtesy pytorch.org.)](graphics/pytorch2_pipeline.png){width=70%}
 
 ## Triton: The Modern GPU Kernel DSL
 
@@ -531,8 +529,7 @@ def add_kernel(x_ptr, y_ptr, out_ptr, n, BLOCK: tl.constexpr):
     pid = tl.program_id(0)
     offs = pid * BLOCK + tl.arange(0, BLOCK)
     mask = offs < n
-    tl.store(out_ptr + offs, tl.load(x_ptr + offs, mask) +
-                              tl.load(y_ptr + offs, mask), mask)
+    tl.store(out_ptr + offs, tl.load(x_ptr + offs, mask) + tl.load(y_ptr + offs, mask), mask)
 ```
 
 ## Other Notable Systems
@@ -556,15 +553,15 @@ def add_kernel(x_ptr, y_ptr, out_ptr, n, BLOCK: tl.constexpr):
 
 ## What Still Goes Wrong
 
-Even with great compilers, real DL programs fight the toolchain.
+Even with great compilers, real DL programs fight the toolchain. **Each bullet below is an active research direction.**
 
-- **Graph breaks**: Python features the tracer can't follow.
-- **Shape specialization explosion**: too many recompiles.
-- **Numerical drift**: fused kernels reorder floating-point math.
-- **Side effects**: `print`, mutable state, file I/O behave subtly differently in graph mode.
-- **Debuggability**: the kernel that ran is not the code you wrote.
+- **Graph breaks**: Python features the tracer can't follow. *(Open: how to safely cross or eliminate them without sacrificing eager fall-back.)*
+- **Shape specialization explosion**: too many recompiles. *(Open: better symbolic-shape reasoning; bounding the specialization space.)*
+- **Numerical drift**: fused kernels reorder floating-point math. *(Open: verifying numerical equivalence under aggressive fusion.)*
+- **Side effects**: `print`, mutable state, file I/O behave subtly differently in graph mode. *(Open: precise effect tracking in dynamic languages --- what our research addresses.)*
+- **Debuggability**: the kernel that ran is not the code you wrote. *(Open: source-level mapping from compiler output back to user code.)*
 
-> These are *exactly* the obstacles my refactoring research targets. [^kh23] [^kh25]
+> These are *exactly* the obstacles our refactoring research targets [@kh23; @kh25].
 
 ## Class Discussion
 
@@ -616,6 +613,11 @@ The Dragon Book does not (yet) cover this material. Use these instead.
 
 - Khatchadourian et al. *Towards Safe Automated Refactoring of Imperative DL Programs to Graph Execution.* ASE 2023. [arxiv.org/abs/2308.11785](https://arxiv.org/abs/2308.11785)
 - Khatchadourian et al. *Speculative Automated Refactoring of Imperative DL Programs to Graph Execution.* 2025. [arxiv.org/abs/2504.05424](https://arxiv.org/abs/2504.05424)
+
+## References
+
+::: {#refs}
+:::
 
 ## Up Next
 
