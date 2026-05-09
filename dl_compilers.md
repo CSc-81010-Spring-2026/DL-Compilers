@@ -290,6 +290,19 @@ A tensor's *type* in a DL IR is much more than `int` or `float`.
 
 PyTorch 2.x uses *symbolic shape* tracking in its compiler so it can specialize without re-tracing every input [@pt2].
 
+## Why DL Compilers Handle Gradients
+
+DL training is *forward and backward*. A DL compiler has to deal with both.
+
+- **Forward pass**: input → output (the model's prediction).
+- **Backward pass**: output → gradients of the loss with respect to each parameter.
+- **Automatic differentiation** mechanically derives the backward graph from the forward graph.
+- A DL compiler must capture, optimize, and lower **both graphs together**: fusing across the forward/backward boundary, sharing intermediate buffers, recomputing for memory.
+
+In PyTorch 2 this is what **AOTAutograd** does (the second box in the pipeline diagram coming up): it captures the backward pass ahead-of-time so the compiler sees the whole training step.
+
+> Inference-only compilers (TF Lite, TensorRT) skip backward and have a smaller job. Training compilers don't get to skip it.
+
 ## The Big Idea: Operator Fusion
 
 The single most important DL-compiler optimization.
@@ -334,7 +347,7 @@ This is the DL-compiler analogue of *peephole optimization* + *loop fusion* (whi
 
 - **Layout transforms**: NHWC vs. NCHW vs. blocked layouts.
 - **Algebraic simplification**: $A B^T \cdot C = A (B^T C)$ when shapes make it cheaper.
-- **Quantization**: lower precision (`float32` $\to$ `float16` $\to$ `int8` $\to$ `int4`).
+- **Quantization**: lower precision (`float32` $\to$ `int4`) for smaller models and faster inference. Critical for edge / mobile deployment; the compiler tracks precision through the graph and inserts dequantization ops where mixed-precision boundaries occur.
 - **Mixed precision**: keep accumulators in `float32`.
 - **Recomputation (a.k.a. activation checkpointing)**: trade compute for memory.
 - **Sharding**: split tensors across devices for parallelism.
