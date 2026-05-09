@@ -224,7 +224,7 @@ A fair question: most of you write PyTorch. Why does this research target Tensor
 ## Computation Graphs as the High-Level IR
 
 :::::::::::::: {.columns}
-::: {.column width="40%"}
+::: {.column width="30%"}
 
 A DL model is naturally a directed acyclic graph (DAG) of tensor ops.
 
@@ -234,7 +234,7 @@ A DL model is naturally a directed acyclic graph (DAG) of tensor ops.
 - **Leaves**: outputs/loss.
 
 :::
-::: {.column width="60%"}
+::: {.column width="70%"}
 
 ```mermaid
 graph LR

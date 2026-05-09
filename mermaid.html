@@ -43,12 +43,17 @@
   }
   pre > code { background: none; padding: 0; }
 
-  /* Mermaid: SVG sized via CSS so it doesn't depend on parent layout
-     at render time (slidy hides non-current slides with display:none). */
+  /* Mermaid: scale every diagram to a consistent fraction of the slide
+     width regardless of its natural intrinsic size. max-width: 100%
+     was leaving small diagrams (e.g. short pipelines) at their natural
+     ~300px size while wider ones filled the slide.
+     Sized via CSS so render doesn't depend on parent layout at load
+     time (slidy hides non-current slides with display:none). */
   div.mermaid { text-align: center; margin: 1em auto; }
   div.mermaid svg {
-    max-width: 100%;
-    max-height: 60vh;
+    width: 100%;
+    max-width: 1000px;
+    max-height: 70vh;
     height: auto;
     display: block;
     margin: 0 auto;
