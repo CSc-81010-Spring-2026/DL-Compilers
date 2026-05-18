@@ -493,7 +493,7 @@ graph TD
 
 ## TorchInductor (PyTorch 2.x)
 
-PyTorch's default backend behind `torch.compile` [@pt2]. The system splits into two pieces: a *frontend* that captures a graph from running Python, and a *backend* that lowers the graph to fast kernels.
+PyTorch's default backend behind `torch.compile` [@pt2].
 
 :::::::::::::: {.columns}
 ::: {.column width="50%"}

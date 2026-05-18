@@ -29,13 +29,23 @@
     margin-top: 0.3em;
   }
 
-  /* Code blocks */
+  /* Code blocks. max-height keeps long listings from pushing later
+     slide content off the bottom of the viewport — slidy scales by
+     width only, so vertical overflow has to be capped here. */
   pre {
     background-color: #f6f8fa;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     padding: 0.5em 0.8em;
+    max-height: 70vh;
+    overflow: auto;
   }
+
+  /* Cap image height so a width=100% image still respects the slide's
+     vertical space on wide/short displays (e.g. classroom 16:9 TVs).
+     Without this, tall images push following content off the slide. */
+  img { max-width: 100%; max-height: 65vh; height: auto; }
+  figure img { max-height: 58vh; }   /* leave room for caption */
   code {
     background-color: #f0f0f0;
     padding: 0 0.25em;
