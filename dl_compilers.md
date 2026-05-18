@@ -86,10 +86,8 @@ Modern DL workloads stress every assumption a classical compiler makes.
 
 ## The DL Compiler Stack: A Picture
 
-A DL compiler is a *bridge* between framework-level models and hardware-specific kernels.
-
 ```mermaid
-graph TD
+graph LR
   fw["Framework code\nTF/PyTorch/JAX"] --> high["High-level IR\ncomputation graph, ops, tensors, shapes"]
   high --> mid["Mid-level IR\nloops, tiles, memory layout"]
   mid --> low["Low-level IR\ntarget-specific: PTX, HIP, LLVM, Triton"]
@@ -157,7 +155,7 @@ But it is not *free* to use:
 The *DL compiler* sits on the **graph** side of the bridge. Our research sits on the **imperative-to-graph** side.
 
 ```mermaid
-graph TD
+graph LR
   py["Python (eager)"] -->|"refactoring +\nstatic analysis"| g[Graph]
   g --> c["DL compiler (today)"]
   c --> k[Optimized kernels]
@@ -170,8 +168,6 @@ graph TD
 > Q: Why can't we just compile *all* Python automatically?
 
 ## Inside the Bridge: A Static-Analysis Refactoring Tool
-
-What does "decide if a function can become a graph" actually involve?
 
 :::::::::::::: {.columns}
 ::: {.column width="55%"}
@@ -208,7 +204,7 @@ This is a recurring theme in modern PL research: relax soundness, regain coverag
 
 ## The Tool in Action
 
-![The Hybridize Functions refactoring previewing the diff: `@tf.function` injected before `def call`, side-by-side, ready to apply. (Khatchadourian et al. 2025.)](graphics/screenshot.png){width=70%}
+![Refactoring preview: `@tf.function` injected before `def call`. (Khatchadourian et al. 2025.)](graphics/screenshot.png){width=55%}
 
 > Real Eclipse plug-in. Real refactoring preview. Real `@tf.function` decorator inserted automatically once the analysis confirms preconditions hold.
 
@@ -456,7 +452,7 @@ Three dialects on one slide: `func`, `arith`, plus the `tensor` type system.
 The *defining workflow* of an MLIR-based compiler.
 
 ```mermaid
-graph TD
+graph LR
   tosa["tosa\n(NN ops)"] -->|legalize| linalg[linalg]
   linalg -->|tile/fuse| scfvec["scf + vector"]
   scfvec -->|lower| llvmgpu["llvm + nvgpu"]
@@ -618,7 +614,7 @@ The Dragon Book does not (yet) cover this material. Use these instead.
 - Chen et al. *TVM.* OSDI 2018.
 - Ragan-Kelley et al. *Halide.* PLDI 2013.
 
-### Connecting to Research (Optional)
+## Reading: Connecting to Research (Optional)
 
 - Khatchadourian et al. *Towards Safe Automated Refactoring of Imperative DL Programs to Graph Execution.* ASE 2023. [arxiv.org/abs/2308.11785](https://arxiv.org/abs/2308.11785)
 - Khatchadourian et al. *Speculative Automated Refactoring of Imperative DL Programs to Graph Execution.* 2025. [arxiv.org/abs/2504.05424](https://arxiv.org/abs/2504.05424)
