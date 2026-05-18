@@ -71,12 +71,16 @@
   div.mermaid { text-align: center; margin: 1em auto; }
   div.mermaid svg {
     width: 100%;
-    max-width: 1800px;
+    max-width: 1000px;
     max-height: 70vh;
     height: auto;
     display: block;
     margin: 0 auto;
   }
+  /* Opt-in larger cap for dense diagrams (mark the source block with
+     ```{.mermaid .large} ... ```). The renderAll script below carries
+     the .large class from the source <pre> to the rendered <div>. */
+  div.mermaid.large svg { max-width: 1800px; }
 </style>
 
 <script>
@@ -97,7 +101,7 @@
     startOnLoad: false,
     theme: "default",
     securityLevel: "loose",
-    fontSize: 18,
+    fontSize: 14,
     flowchart: { useMaxWidth: false, htmlLabels: false, curve: "basis" }
   });
 
@@ -109,14 +113,20 @@
     const sources = Array.from(document.querySelectorAll('pre.mermaid > code, pre > code.mermaid'));
     for (let i = 0; i < sources.length; i++) {
       const code = sources[i];
+      const pre = code.parentElement;
       const definition = code.textContent;
       const id = `mermaid-${Date.now()}-${i}`;
       try {
         const { svg } = await mermaid.render(id, definition);
         const div = document.createElement('div');
         div.className = 'mermaid';
+        // Carry any non-mermaid classes (e.g. ".large") from the source
+        // <pre> over to the rendered <div> so per-diagram CSS can target them.
+        for (const cls of pre.classList) {
+          if (cls !== 'mermaid') div.classList.add(cls);
+        }
         div.innerHTML = svg;
-        code.parentElement.replaceWith(div);
+        pre.replaceWith(div);
       } catch (e) {
         console.error(`mermaid.render failed for diagram ${i}:`, e);
       }
