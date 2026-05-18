@@ -603,7 +603,7 @@ Plus one piece *we didn't cover this semester* (machine code generation), now vi
 1. The hardest open problem isn't "make it fast"---it's "make it safe to compile in the first place".
 1. That last point connects this entire course to active research.
 
-## Suggested Reading
+## Reading
 
 The Dragon Book does not (yet) cover this material. Use these instead.
 
