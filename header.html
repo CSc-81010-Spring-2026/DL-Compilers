@@ -77,9 +77,11 @@
     display: block;
     margin: 0 auto;
   }
-  /* Opt-in larger cap for dense diagrams (mark the source block with
-     ```{.mermaid .large} ... ```). The renderAll script below carries
-     the .large class from the source <pre> to the rendered <div>. */
+  /* Opt-in larger caps for diagrams that need more room. Mark the
+     source block with ```{.mermaid .medium} or ```{.mermaid .large}.
+     The renderAll script below carries the extra class from the
+     source <pre> to the rendered <div>. */
+  div.mermaid.medium svg { max-width: 1400px; }
   div.mermaid.large svg { max-width: 1800px; }
 </style>
 
