@@ -186,7 +186,7 @@ graph LR
 :::
 ::::::::::::::
 
-> This is **classical static analysis**, applied to a brand-new domain. Everything you learned about CFG, DFG, SSA, and pointer analysis maps directly.
+> This is **classical static analysis**, applied to a brand-new domain. Everything you learned about CFG and data-flow analysis maps directly---and the same ideas extend to SSA and pointer analysis, which we only previewed on the introductory overview slide.
 
 ## Speculation: Living With Python's Dynamism
 
@@ -324,7 +324,7 @@ relu(x + b)          ----fuse---->     fused_add_relu(x, b)
 - **Horizontal fusion**: combine independent ops sharing inputs.
 - **Conv + BatchNorm + ReLU**: the classic CNN fusion.
 
-This is the DL-compiler analogue of *peephole optimization* + *loop fusion* (which you saw in the optimizations lecture, applied to scalar loops; here it operates on tensor ops).
+This is the DL-compiler analogue of *local algebraic simplification* (the DAG-based CSE / algebraic-identity transforms from the local-optimizations part of the lecture) + *loop fusion* (Part 4 of the optimizations lecture, applied to scalar loops; here it operates on tensor ops).
 
 ## Other Classical Optimizations, in DL Garb
 
@@ -584,7 +584,7 @@ Most of what we covered earlier shows up here:
 - **Lex/parse**: framework code $\to$ AST $\to$ graph IR.
 - **Type checking**: tensor shape/dtype/layout inference.
 - **CFG/DFG**: graph IR is *the* dataflow graph.
-- **Optimizations**: constant folding, DCE, CSE, fusion, layout, tiling.
+- **Optimizations**: constant folding, DCE, CSE, fusion (all from the optimizations lecture); plus *layout* and *tiling*---DL-specific extensions (tiling was only mentioned in passing as material for the parallel-computing course).
 
 Plus one piece *we didn't cover this semester* (machine code generation), now visible everywhere: **codegen** to PTX, HIP, LLVM, Triton, MLIR.
 
