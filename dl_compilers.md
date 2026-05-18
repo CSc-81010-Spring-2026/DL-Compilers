@@ -204,7 +204,7 @@ This is a recurring theme in modern PL research: relax soundness, regain coverag
 
 ## The Tool in Action
 
-![Refactoring preview: `@tf.function` injected before `def call`. (Khatchadourian et al. 2025.)](graphics/screenshot.png){width=55%}
+![Refactoring preview: `@tf.function` injected before `def call`. (Khatchadourian et al. 2025.)](graphics/screenshot.png){width=40%}
 
 > Real Eclipse plug-in. Real refactoring preview. Real `@tf.function` decorator inserted automatically once the analysis confirms preconditions hold.
 
@@ -614,10 +614,10 @@ The Dragon Book does not (yet) cover this material. Use these instead.
 - Chen et al. *TVM.* OSDI 2018.
 - Ragan-Kelley et al. *Halide.* PLDI 2013.
 
-## Reading: Connecting to Research (Optional)
+### Connecting to Research (Optional)
 
-- Khatchadourian et al. *Towards Safe Automated Refactoring of Imperative DL Programs to Graph Execution.* ASE 2023. [arxiv.org/abs/2308.11785](https://arxiv.org/abs/2308.11785)
-- Khatchadourian et al. *Speculative Automated Refactoring of Imperative DL Programs to Graph Execution.* 2025. [arxiv.org/abs/2504.05424](https://arxiv.org/abs/2504.05424)
+- Khatchadourian et al. *Towards Safe Automated Refactoring of Imperative DL Programs to Graph Execution.* ASE 2023, pp. 1800--1802. [doi.org/10.1109/ASE56229.2023.00187](https://doi.org/10.1109/ASE56229.2023.00187)
+- Khatchadourian et al. *Speculative Automated Refactoring of Imperative DL Programs to Graph Execution.* ASE 2025, pp. 752--764. [doi.org/10.1109/ASE63991.2025.00068](https://doi.org/10.1109/ASE63991.2025.00068)
 
 ## References
 
