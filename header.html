@@ -1,5 +1,3 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
   /* Tables: borders, header band, zebra rows, LEFT-aligned (matches body) */
   table { border-collapse: collapse; margin: 1em 0; }
@@ -86,38 +84,6 @@
   div.mermaid.medium svg { max-width: 1400px; }
   div.mermaid.large svg { max-width: 1800px; }
 </style>
-
-<script>
-  // Disable slidy's mouse-click-to-advance by default. Students may
-  // click slides to copy code, follow citation links, or interact with
-  // diagrams; we don't want any of those clicks to advance the deck.
-  // Press K during the presentation to toggle back on.
-  window.addEventListener("load", () => {
-    if (typeof w3c_slidy === "undefined") return;
-    w3c_slidy.mouse_click_enabled = false;
-
-    // Touch navigation. Click-to-advance is off (above), and phones
-    // have no keyboard — so on touch devices we use horizontal swipes
-    // to move between slides. Vertical swipes still scroll the slide.
-    let startX = 0, startY = 0, startT = 0;
-    document.addEventListener("touchstart", (e) => {
-      if (e.touches.length !== 1) return;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      startT = Date.now();
-    }, { passive: true });
-    document.addEventListener("touchend", (e) => {
-      if (e.changedTouches.length !== 1) return;
-      const dx = e.changedTouches[0].clientX - startX;
-      const dy = e.changedTouches[0].clientY - startY;
-      if (Date.now() - startT > 600) return;
-      if (Math.abs(dx) < 60) return;
-      if (Math.abs(dy) > Math.abs(dx)) return;
-      if (dx < 0) w3c_slidy.next_slide(true);
-      else w3c_slidy.previous_slide(true);
-    }, { passive: true });
-  });
-</script>
 
 <script type="module">
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
