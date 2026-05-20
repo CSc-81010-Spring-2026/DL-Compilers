@@ -85,6 +85,45 @@
   div.mermaid.large svg { max-width: 1800px; }
 </style>
 
+<script>
+  // Mobile touch fix. Slidy's per-slide touchmove calls preventDefault
+  // (blocks native scrolling) and its touchend maps a vertical swipe to
+  // "toggle TOC" — so on phones, any slide taller than the viewport is
+  // unscrollable, and trying to scroll opens the table of contents.
+  //
+  // We can't undo slidy's listeners (they're bound by reference at init),
+  // so we install document-level capture-phase listeners that fire first
+  // and stopPropagation — slidy's per-slide handlers never see the event.
+  // Horizontal swipe still advances; vertical drag falls through to the
+  // browser's native scroll.
+  window.addEventListener("load", () => {
+    if (typeof w3c_slidy === "undefined") return;
+    let startX = 0, startY = 0, startT = 0;
+    document.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      e.stopPropagation();
+      startX = e.touches[0].pageX;
+      startY = e.touches[0].pageY;
+      startT = Date.now();
+    }, { capture: true, passive: true });
+    document.addEventListener("touchmove", (e) => {
+      if (e.touches.length !== 1) return;
+      e.stopPropagation();
+    }, { capture: true, passive: true });
+    document.addEventListener("touchend", (e) => {
+      if (e.changedTouches.length !== 1) return;
+      e.stopPropagation();
+      const dx = e.changedTouches[0].pageX - startX;
+      const dy = e.changedTouches[0].pageY - startY;
+      if (Date.now() - startT > 600) return;
+      if (Math.abs(dx) < 80) return;
+      if (Math.abs(dx) < 2 * Math.abs(dy)) return;
+      if (dx < 0) w3c_slidy.next_slide(true);
+      else w3c_slidy.previous_slide(true);
+    }, { capture: true, passive: true });
+  });
+</script>
+
 <script type="module">
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
   mermaid.initialize({
