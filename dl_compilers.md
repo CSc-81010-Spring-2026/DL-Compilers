@@ -48,7 +48,7 @@ This is a two-hour session, covering two related advanced topics.
 Modern DL workloads stress every assumption a classical compiler makes.
 
 - The *units of computation* are tensor operations, not scalar instructions.
-- The hot loops are massively parallel and run on GPUs/TPUs/NPUs, not CPUs.
+- The hot loops are massively parallel and run on GPUs, **TPUs** (Google's Tensor Processing Units), and **NPUs** (Neural Processing Units, e.g., on phones), not CPUs.
 - Performance gaps between naive and optimized code can be **10--100x**.
 - The "source language" is increasingly Python, dynamically typed and side-effectful.
 
@@ -93,6 +93,8 @@ graph LR
   mid --> low["Low-level IR\ntarget-specific: PTX, HIP, LLVM, Triton"]
   low --> mc["Machine code\nGPU/TPU/NPU/CPU"]
 ```
+
+Low-level IR targets: **PTX** (NVIDIA's GPU assembly-level IR), **HIP** (AMD's CUDA-compatible runtime + IR), **LLVM** (the classical CPU/GPU backend), **Triton** (a Python-embedded GPU kernel DSL---details later).
 
 > **Same lowering principle as a classical compiler.** What's new is the *high level*.
 
@@ -179,7 +181,9 @@ graph LR
 
 ### What Each Analysis Does
 
-- **Tensor analysis**: track which Python values flow as tensors (vs. lists, dicts, scalars).
+Built on **WALA** (T.J. Watson Libraries for Analysis, IBM); **Ariadne** is WALA's Python/tensor frontend, providing the tensor and type analyses below.
+
+- **Tensor analysis** (Ariadne): track which Python values flow as tensors (vs. lists, dicts, scalars).
 - **Side-effect analysis**: identify operations that would not survive graph capture (mutating Python state, I/O, non-deterministic ops).
 - **Preconditions**: a *safety contract* per function---if all checks pass, refactoring is sound.
 
@@ -275,6 +279,8 @@ A tensor's *type* in a DL IR is much more than `int` or `float`.
 | Layout    | `NHWC` vs. `NCHW`           |
 | Device    | `cuda:0`                    |
 | Sparsity  | dense/CSR/block-sparse  |
+
+**Layout codes**: N = batch, C = channels, H = height, W = width---so `NCHW` orders memory as batch-major then channels, `NHWC` as batch-major then spatial. Different hardware prefers different orderings; rewriting between them is a real DL-compiler pass.
 
 > Q: How does this change what *type checking* and *type inference* mean?
 
@@ -463,6 +469,8 @@ graph LR
 - Optimizations happen at the *right level of abstraction*.
 - Verifier checks invariants at every step.
 
+Dialects in this chain: **`tosa`** (Tensor Operator Set Architecture---high-level NN ops), **`linalg`** (generic linear-algebra ops over tensors), **`scf`** (structured control flow: `for`, `if`, `while`), **`vector`** (SIMD-style vector ops), **`nvgpu`** (NVIDIA-GPU-specific ops above raw PTX), **`llvm`** (the LLVM IR dialect, the final stop before the LLVM backend).
+
 > Compare with the *single*-IR design (e.g., LLVM IR): MLIR generalizes this to a *family* of IRs.
 
 ## MLIR's Reach Today
@@ -498,7 +506,7 @@ PyTorch's default backend behind `torch.compile` [@pt2].
 
 - Hooks CPython's frame-evaluation API (PEP 523).
 - Symbolically interprets bytecode.
-- Captures an **FX graph**---a Python-level graph IR.
+- Captures an **FX graph** (from `torch.fx`, PyTorch's symbolic-trace IR)---a Python-level graph of `torch` ops, still introspectable from Python.
 - Falls back to eager on "graph breaks" (e.g., unsupported Python).
 
 :::
