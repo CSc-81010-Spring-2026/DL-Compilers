@@ -1,7 +1,5 @@
 <meta name="dcterms.license" content="https://creativecommons.org/licenses/by-sa/4.0/">
 <meta name="dcterms.source" content="https://github.com/CSc-81010-Spring-2026/DL-Compilers">
-<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">
-
 <style>
   /* Tables: borders, header band, zebra rows, LEFT-aligned (matches body) */
   table { border-collapse: collapse; margin: 1em 0; }
@@ -187,7 +185,7 @@
     const licenseUrl = "https://creativecommons.org/licenses/by-sa/4.0/";
     const p = document.createElement("p");
     p.className = "license-notice";
-    p.innerHTML = 'Licensed under <a href="' + licenseUrl + '">CC BY-SA 4.0</a>';
+    p.innerHTML = 'Licensed under <a rel="license" href="' + licenseUrl + '">CC BY-SA 4.0</a>';
     const src = document.querySelector('meta[name="dcterms.source"]');
     if (src && src.content) {
       const host = src.content.replace(/^https?:\/\//, "");
