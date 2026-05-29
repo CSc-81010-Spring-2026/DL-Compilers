@@ -19,9 +19,9 @@ See the `Makefile` for the exact Pandoc invocation and the other targets.
 
 Source files:
 
-- `dl_compilers.md` — the slide content (edit this)
-- `refs.bib` — bibliography, rendered via citeproc
-- `header.html` — CSS and JavaScript injected into the document `<head>`
-- `graphics/` — figures
+- `dl_compilers.md`—the slide content (edit this)
+- `refs.bib`—bibliography, rendered via citeproc
+- `header.html`—CSS and JavaScript injected into the document `<head>`
+- `graphics/`—figures
 
 The `make deploy` target is for the author's own web host and relies on an ssh alias (`compsci`) defined in `~/.ssh/config`; adopters can ignore it.
