@@ -19,6 +19,7 @@ self-contained:
 dist:
 	mkdir -p $(DIST)
 	$(PANDOC) --embed-resources -o $(DIST)/$(FILE).html
+	@grep -q 'data:text/javascript' $(DIST)/$(FILE).html || { echo "ERROR: slidy.js not embedded (network fetch failed?); removing incomplete $(DIST)/$(FILE).html" >&2; rm -f $(DIST)/$(FILE).html; exit 1; }
 	git archive --format=zip -o $(DIST)/$(FILE)-src.zip HEAD
 preview: all
 	gio open $(FILE).html
