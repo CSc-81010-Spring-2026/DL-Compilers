@@ -6,6 +6,10 @@ PANDOC=pandoc --shift-heading-level-by=-1 -t slidy -s -H header.html --citeproc 
 REMOTE?=compsci
 DIST?=dist
 
+# All targets are phony — none produce a file named after the target. (Without
+# this, `dist` would be skipped once the dist/ directory exists.)
+.PHONY: all self-contained dist preview clean open deploy
+
 all:
 	$(PANDOC) -o $(FILE).html
 self-contained:
