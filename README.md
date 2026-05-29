@@ -15,11 +15,7 @@ make                  # build dl_compilers.html (references graphics/)
 make self-contained   # single-file HTML with images inlined (for distribution)
 ```
 
-Equivalently, without `make`:
-
-```bash
-pandoc --shift-heading-level-by=-1 -t slidy -s -H header.html --citeproc -M link-citations=true --bibliography=refs.bib dl_compilers.md -o dl_compilers.html
-```
+See the `Makefile` for the exact Pandoc invocation and the other targets.
 
 Source files:
 
