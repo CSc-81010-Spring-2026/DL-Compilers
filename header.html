@@ -1,3 +1,7 @@
+<meta name="dcterms.license" content="https://creativecommons.org/licenses/by-sa/4.0/">
+<meta name="dcterms.source" content="https://github.com/CSc-81010-Spring-2026/DL-Compilers">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">
+
 <style>
   /* Tables: borders, header band, zebra rows, LEFT-aligned (matches body) */
   table { border-collapse: collapse; margin: 1em 0; }
@@ -106,6 +110,17 @@
   @media (hover: none) and (pointer: coarse) {
     .slidy-toc-button { display: block; }
   }
+
+  /* License/attribution notice on the title slide, so the standalone HTML
+     carries its license even when separated from the repo and LICENSE.md.
+     Injected by the script below because the slidy template has no license
+     field. */
+  .titlepage .license-notice {
+    margin-top: 2em;
+    font-size: 0.6em;
+    color: #555;
+  }
+  .titlepage .license-notice a { color: #4a90d9; }
 </style>
 
 <script>
@@ -157,6 +172,28 @@
       if (dx < 0) w3c_slidy.next_slide(true);
       else w3c_slidy.previous_slide(true);
     }, { capture: true, passive: true });
+  });
+</script>
+
+<script>
+  // Stamp a license/attribution line onto the title slide. Kept here (not in
+  // the Markdown) because Pandoc's slidy template renders no license field;
+  // this way the notice rides along with the self-contained HTML. The source
+  // URL is read from the dcterms.source meta tag, so this snippet is identical
+  // across decks. Title and author are already shown above it (TASL).
+  window.addEventListener("DOMContentLoaded", () => {
+    const cover = document.querySelector(".titlepage");
+    if (!cover || cover.querySelector(".license-notice")) return;
+    const licenseUrl = "https://creativecommons.org/licenses/by-sa/4.0/";
+    const p = document.createElement("p");
+    p.className = "license-notice";
+    p.innerHTML = 'Licensed under <a href="' + licenseUrl + '">CC BY-SA 4.0</a>';
+    const src = document.querySelector('meta[name="dcterms.source"]');
+    if (src && src.content) {
+      const host = src.content.replace(/^https?:\/\//, "");
+      p.innerHTML += ' · Source: <a href="' + src.content + '">' + host + '</a>';
+    }
+    cover.appendChild(p);
   });
 </script>
 
