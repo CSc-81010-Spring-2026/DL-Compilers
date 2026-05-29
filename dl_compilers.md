@@ -5,6 +5,7 @@ date: May 12, 2026
 semester: Spring 2026
 footer: "CSc 81010: Compiler Design & Implementation"
 license: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+lang: en
 ---
 
 # Deep Learning Compilers
