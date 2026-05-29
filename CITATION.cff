@@ -5,8 +5,8 @@ type: dataset
 authors:
   - family-names: Khatchadourian
     given-names: Raffi
-    affiliation: "City University of New York (CUNY) Hunter College"
-    email: khatchad@hunter.cuny.edu
+    affiliation: "City University of New York (CUNY) Graduate Center"
+    email: rkhatchadourian@gc.cuny.edu
 license: CC-BY-SA-4.0
 repository-code: "https://github.com/CSc-81010-Spring-2026/DL-Compilers"
 url: "http://cs.hunter.cuny.edu/~khatchad/media/dl_compilers"
